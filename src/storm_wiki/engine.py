@@ -184,9 +184,7 @@ class STORMWikiRunner(Engine):
             disable_perspective=False,
             return_conversation_log=True
         )
-
         FileIOHelper.dump_json(conversation_log, os.path.join(self.article_output_dir, 'conversation_log.json'))
-        information_table.dump_url_to_info(os.path.join(self.article_output_dir, 'raw_search_results.json'))
         return information_table
 
     def run_outline_generation_module(self,
@@ -199,8 +197,6 @@ class STORMWikiRunner(Engine):
             return_draft_outline=True,
             callback_handler=callback_handler
         )
-        outline.dump_outline_to_file(os.path.join(self.article_output_dir, 'storm_gen_outline.txt'))
-        draft_outline.dump_outline_to_file(os.path.join(self.article_output_dir, "direct_gen_outline.txt"))
         return outline
 
     def run_article_generation_module(self,
@@ -214,7 +210,7 @@ class STORMWikiRunner(Engine):
             article_with_outline=outline,
             callback_handler=callback_handler
         )
-        draft_article.dump_article_as_plain_text(os.path.join(self.article_output_dir, 'storm_gen_article.txt'))
+        draft_article.dump_article_as_plain_text(os.path.join(self.article_output_dir, 'storm_gen_article.md'))
         draft_article.dump_reference_to_file(os.path.join(self.article_output_dir, 'url_to_info.json'))
         return draft_article
 
@@ -228,7 +224,7 @@ class STORMWikiRunner(Engine):
             remove_duplicate=remove_duplicate
         )
         FileIOHelper.write_str(polished_article.to_string(),
-                               os.path.join(self.article_output_dir, 'storm_gen_article_polished.txt'))
+                               os.path.join(self.article_output_dir, 'storm_gen_article_polished.md'))
         return polished_article
 
     def post_run(self):
@@ -237,15 +233,7 @@ class STORMWikiRunner(Engine):
         1. Dumping the run configuration.
         2. Dumping the LLM call history.
         """
-        config_log = self.lm_configs.log()
-        FileIOHelper.dump_json(config_log, os.path.join(self.article_output_dir, 'run_config.json'))
-
-        llm_call_history = self.lm_configs.collect_and_reset_lm_history()
-        with open(os.path.join(self.article_output_dir, 'llm_call_history.jsonl'), 'w') as f:
-            for call in llm_call_history:
-                if 'kwargs' in call:
-                    call.pop('kwargs')  # All kwargs are dumped together to run_config.json.
-                f.write(json.dumps(call) + '\n')
+        return
 
     def _load_information_table_from_local_fs(self, information_table_local_path):
         assert os.path.exists(information_table_local_path), makeStringRed(f"{information_table_local_path} not exists. Please set --do-research argument to prepare the conversation_log.json for this topic.")
@@ -306,7 +294,7 @@ class STORMWikiRunner(Engine):
         if do_generate_outline:
             # load information table if it's not initialized
             if information_table is None:
-                 information_table = self._load_information_table_from_local_fs(os.path.join(self.article_output_dir, 'conversation_log.json'))
+                information_table = self._load_information_table_from_local_fs(os.path.join(self.article_output_dir, 'conversation_log.json'))
             outline = self.run_outline_generation_module(information_table=information_table,
                                                          callback_handler=callback_handler)
 
@@ -324,7 +312,7 @@ class STORMWikiRunner(Engine):
         # article polishing module
         if do_polish_article:
             if draft_article is None:
-                draft_article_path = os.path.join(self.article_output_dir, 'storm_gen_article.txt')
+                draft_article_path = os.path.join(self.article_output_dir, 'storm_gen_article.md')
                 url_to_info_path = os.path.join(self.article_output_dir, 'url_to_info.json')
                 draft_article =  self._load_draft_article_from_local_fs(topic=topic, draft_article_path=draft_article_path, url_to_info_path=url_to_info_path)
             self.run_article_polishing_module(draft_article=draft_article, remove_duplicate=remove_duplicate)
