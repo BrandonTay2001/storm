@@ -39,9 +39,9 @@ def generate(args, topic):
     # which is used to split queries, synthesize answers in the conversation. We recommend using stronger models
     # for outline_gen_lm which is responsible for organizing the collected information, and article_gen_lm
     # which is responsible for generating sections with citations.
-    conv_simulator_lm = OpenAIModel(model='gpt-3.5-turbo', max_tokens=500, **openai_kwargs)
-    question_asker_lm = OpenAIModel(model='gpt-3.5-turbo', max_tokens=500, **openai_kwargs)
-    outline_gen_lm = OpenAIModel(model='gpt-3.5-turbo', max_tokens=400, **openai_kwargs)
+    conv_simulator_lm = OpenAIModel(model='gpt-4o-mini', max_tokens=500, **openai_kwargs)
+    question_asker_lm = OpenAIModel(model='gpt-4o-mini', max_tokens=500, **openai_kwargs)
+    outline_gen_lm = OpenAIModel(model='gpt-4o-mini', max_tokens=400, **openai_kwargs)
     article_gen_lm = OpenAIModel(model='gpt-4o', max_tokens=700, **openai_kwargs)
     article_polish_lm = OpenAIModel(model='gpt-4o', max_tokens=4000, **openai_kwargs)
 

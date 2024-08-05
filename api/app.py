@@ -23,7 +23,7 @@ def generate_report():
         sorted_urls = [item[0] for item in sorted_items]
         html += "\n\n<h2>Reference URLs</h2>"
         for i, url in enumerate(sorted_urls):
-            add = f'<p>[{i + 1}]: {url}</p>'
+            add = f'<p>[{i + 1}]: <a href={url} target="_blank">{url}</a></p>'
             html += add + '\n'
         # delete the entire output directory
         shutil.rmtree(final_output_dir)
