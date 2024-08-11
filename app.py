@@ -31,5 +31,9 @@ def generate_report():
     except Exception as e:
         return str(e)
 
+@app.route('/')
+def test():
+    return "Hello World"
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", threaded=True)
+    app.run(host="0.0.0.0", threaded=True, port=5000)
