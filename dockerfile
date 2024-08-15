@@ -1,4 +1,4 @@
-FROM python:3.9-slim-buster
+FROM --platform=linux/amd64 python:3.9-slim-buster
 
 WORKDIR /storm-docker
 
@@ -9,4 +9,6 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=5000"]
+EXPOSE 5001
+
+CMD ["gunicorn", "app:app", "-b", "0.0.0.0:5001", "-w", "2"]

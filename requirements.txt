@@ -20,4 +20,6 @@ langchain
 tqdm==4.66.0
 flask
 flask_cors
+gunicorn
+Werkzeug
 markdown
